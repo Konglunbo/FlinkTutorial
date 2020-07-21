@@ -16,7 +16,7 @@ object Example {
     val env: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
 
     //从文件读取数据
-    val inputStream: DataStream[String] = env.readTextFile("E:\\workspace\\workspace_scala\\FlinkTutorial\\src\\main\\resources\\sensor.txt")
+    val inputStream: DataStream[String] = env.readTextFile("C:\\Users\\kongfanxin.CITICCFC\\IdeaProjects\\FlinkTutorial\\src\\main\\resources\\sensor.txt")
 
     // map成样例类类型
     val dataStream: DataStream[SensorReading] = inputStream

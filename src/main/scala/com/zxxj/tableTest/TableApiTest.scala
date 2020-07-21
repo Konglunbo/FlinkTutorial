@@ -19,7 +19,9 @@ object TableApiTest {
     // 1. 创建表执行环境
 //    val tableEnv = StreamTableEnvironment.create(env)
 
-    // 1.1 老版本planner的流式查询
+    /*
+
+       // 1.1 老版本planner的流式查询
     val settings: EnvironmentSettings = EnvironmentSettings.newInstance()
       .useOldPlanner() //老版本
       .inStreamingMode() //流式处理
@@ -44,6 +46,13 @@ object TableApiTest {
       .build()
 
     val bbTableEnv = TableEnvironment.create(bbSettings)
+
+
+     */
+
+
+
+
 
     
 
