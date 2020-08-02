@@ -20,7 +20,7 @@ object TableApiTest1 {
 
     // 2. 连接外部系统，读取数据
     // 2.1 读取文件数据
-    val filePath = "C:\\Users\\kongfanxin.CITICCFC\\IdeaProjects\\FlinkTutorial\\src\\main\\resources\\sensor.txt"
+    val filePath = "D:\\IdeaProjects\\FlinkTutorial\\src\\main\\resources\\sensor.txt"
 
     tableEnv.connect(new FileSystem().path(filePath))
       .withFormat(new OldCsv())
@@ -48,7 +48,7 @@ object TableApiTest1 {
       .createTemporaryTable("kafkaInputTable") // 在表环境注册一张表
 
     // 3. 表的查询转换
-    val sensorTable: Table = tableEnv.from("kafkaInputTable")
+    val sensorTable: Table = tableEnv.from("inputTable")
 
     // 3.1 简单查询转换
     val resultTable: Table = sensorTable.select('id, 'temperature)
