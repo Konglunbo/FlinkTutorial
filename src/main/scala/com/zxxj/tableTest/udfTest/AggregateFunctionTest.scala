@@ -1,19 +1,22 @@
-package com.zxxj.tableTest
+package com.zxxj.tableTest.udfTest
+
 
 import com.zxxj.apitest.SensorReading
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.time.Time
-import org.apache.flink.table.api.{Over, Table, Tumble}
+import org.apache.flink.table.api.Table
 import org.apache.flink.table.api.scala._
+import org.apache.flink.table.functions.AggregateFunction
 import org.apache.flink.types.Row
 
 /**
  * @author shkstart
- * @create 2020-07-29 6:51
+ * @create 2020-08-04 7:03
  */
-object TimeAndWindowTest {
+object AggregateFunctionTest {
+
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setParallelism(1)
@@ -38,58 +41,38 @@ object TimeAndWindowTest {
     // 将流转换成表，直接定义时间字段
     val sensorTable: Table = tableEnv.fromDataStream(dataStream, 'id, 'temperature, 'timestamp.rowtime as 'ts)
 
+    // 先创建一个聚合函数的实例
+    val avg = new AvgTemp
 
-    // 1. Table API
-    // 1.1 Group Window聚合操作
+    // Table API 调用
     val resultTable: Table = sensorTable
-      .window(Tumble over 10.seconds on 'ts as 'tw)
-      .groupBy('id, 'tw)
-      .select('id, 'id.count, 'tw.end)
+      .groupBy('id)
+      .aggregate(avg('temperature) as 'avgTemp)
+      .select('id, 'avgTemp)
+    resultTable.toRetractStream[Row].print("resultTable")
 
 
+    env.execute("agg udf test job")
+    
 
 
-    // 1.2 Over Window 聚合操作
-    val overResultTable: Table = sensorTable
-      .window(Over partitionBy 'id orderBy 'ts preceding 2.rows as 'ow)
-      .select('id, 'ts, 'id.count over 'ow, 'temperature.avg over 'ow)
+  }
 
-    // 2. SQL实现
-    // 2.1 Group Windows
-    tableEnv.createTemporaryView("sensor",sensorTable)
-    val resultSqlTable: Table = tableEnv.sqlQuery(
-      """
-        |select id, count(id) , hop_end(ts , interval '4' second , interval '10' second)
-        |from sensor
-        |group by id , hop(ts , interval '4' second , interval '10' second)
-        |""".stripMargin)
+  // 定义一个样例类，用来保存聚合的状态
+  class AvgTempAcc {
+    var sum: Double = 0.0
+    var count: Int = 0
+  }
 
+  class AvgTemp extends AggregateFunction[Double, AvgTempAcc] {
+    override def getValue(accumulator: AvgTempAcc): Double = accumulator.sum / accumulator.count
 
-    // 2.2 Over Window
-    val orderSqlTable: Table = tableEnv.sqlQuery(
-      """
-        |select id , ts , count(id) over w , avg(temperature) over w
-        |from sensor
-        |window w as (
-        | partition by id
-        | order by ts
-        | rows between 2 preceding and current row 
-        |)
-        |
-        |""".stripMargin)
+    override def createAccumulator(): AvgTempAcc = new AvgTempAcc()
 
-
-
-
-    orderSqlTable.toAppendStream[Row].print("orderSqlTable")
-//    resultSqlTable.toAppendStream[Row].print("resultSqlTable")
-//    overResultTable.toAppendStream[Row].print("over window")
-//    resultTable.toRetractStream[Row].print("AGG")
-
-
-    env.execute("time and window test job")
-
-
+    def accumulate(acc: AvgTempAcc, temp: Double): Unit = {
+      acc.sum += temp
+      acc.count += 1
+    }
   }
 
 }
