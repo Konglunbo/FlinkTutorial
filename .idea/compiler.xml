@@ -6,7 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="FlinkTutorial" />
+        <module name="No37flinkenv" />
+        <module name="FlinkSun" />
       </profile>
     </annotationProcessing>
   </component>

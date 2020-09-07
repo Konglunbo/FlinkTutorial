@@ -4,6 +4,7 @@ import org.apache.flink.streaming.api.scala._
 import org.apache.flink.table.api.{DataTypes, Table}
 import org.apache.flink.table.api.scala._
 import org.apache.flink.table.descriptors.{Kafka, OldCsv, Schema}
+import org.apache.flink.types.Row
 
 /**
  * @author shkstart
@@ -60,6 +61,9 @@ object KafkaPipelineTest {
         .field("temperature", DataTypes.DOUBLE())
       ) //定义表结构
       .createTemporaryTable("kafkaOutputTable") // 在表环境注册一张表
+
+//    val resultStream: DataStream[Row] = resultTable.toAppendStream[Row]
+//    resultStream.print()
     resultTable.toAppendStream[(String, Double)].print("result")
     resultTable.insertInto("kafkaOutputTable")
     env.execute("kafka pipeline test job")

@@ -37,7 +37,7 @@ object TimeAndWindowTest {
 
     // 将流转换成表，直接定义时间字段
     val sensorTable: Table = tableEnv.fromDataStream(dataStream, 'id, 'temperature, 'timestamp.rowtime as 'ts)
-
+//      val sensorTable: Table = tableEnv.fromDataStream(dataStream, 'id, 'temperature, 'timestamp, 'pt.proctime as 'ts)
 
     // 1. Table API
     // 1.1 Group Window聚合操作
@@ -64,6 +64,13 @@ object TimeAndWindowTest {
         |group by id , hop(ts , interval '4' second , interval '10' second)
         |""".stripMargin)
 
+    val resultSqlTable1: Table = tableEnv.sqlQuery(
+      """
+        |select id, count(id) , TUMBLE_END(ts , INTERVAL '10' MINUTE),TUMBLE_START(ts , INTERVAL '10' MINUTE)
+        |from sensor
+        |group by id ,TUMBLE(ts, INTERVAL '10' MINUTE)
+        |""".stripMargin)
+
 
     // 2.2 Over Window
     val orderSqlTable: Table = tableEnv.sqlQuery(
@@ -81,7 +88,7 @@ object TimeAndWindowTest {
 
 
 
-    orderSqlTable.toAppendStream[Row].print("orderSqlTable")
+    resultSqlTable1.toAppendStream[Row].print("orderSqlTable")
 //    resultSqlTable.toAppendStream[Row].print("resultSqlTable")
 //    overResultTable.toAppendStream[Row].print("over window")
 //    resultTable.toRetractStream[Row].print("AGG")
