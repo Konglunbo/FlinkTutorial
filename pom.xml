@@ -12,6 +12,8 @@
         <module>FlinkSun</module>
         <module>No37-flink-env</module>
         <module>No39-deploy-env</module>
+        <module>No45-SQL-Architecture</module>
+        <module>No46-SQL-Datatypes</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

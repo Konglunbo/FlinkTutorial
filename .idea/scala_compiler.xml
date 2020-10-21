@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ScalaCompilerConfiguration">
-    <profile name="Maven 1" modules="FlinkSun,FlinkTutorial,No37flinkenv,No39-deploy-env">
+    <profile name="Maven 1" modules="FlinkSun,FlinkTutorial,No37flinkenv,No39-deploy-env,No45-SQL-Architecture,No46-SQL-Datatypes">
       <parameters>
         <parameter value="-nobootcp" />
       </parameters>

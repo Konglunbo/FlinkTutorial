@@ -7,7 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="FlinkSun" />
+        <module name="No46-SQL-Datatypes" />
         <module name="No39-deploy-env" />
+        <module name="No45-SQL-Architecture" />
         <module name="No37flinkenv" />
       </profile>
     </annotationProcessing>
